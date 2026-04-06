@@ -128,7 +128,7 @@
         .info-capitulo p {
             color: #ccc;
             font-size: 15px;
-            white-space: pre-line; /* Mantiene los saltos de línea del texto */
+            white-space: pre-line; 
         }
 
         /* ===== GRILLA DE CAPÍTULOS ===== */
@@ -219,7 +219,6 @@
 <script>
 /**
  * BASE DE DATOS DE CAPÍTULOS
- * Importante: Usamos ` (comilla invertida) para textos con saltos de línea.
  */
 const capitulos = {
     "1": { 
@@ -234,21 +233,38 @@ Compresión: El pistón sube del PMI al PMS, comprimiendo la mezcla. Esto aument
 Explosión y Expansión: Una chispa de la bujía enciende la mezcla comprimida, generando una explosión que empuja con fuerza el pistón hacia abajo (al PMI). Esta es la fase que genera la fuerza del motor.
 
 Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta, expulsando los gases quemados hacia el exterior para reiniciar el ciclo.` 
-    }
-        "2": { 
-        id: "", 
-        t: "Componentes del Bloque y Movimiento-Sistema de Distribución y Tapa de Cilindro", 
-        d: `1. Componentes del Bloque y MovimientoEsta parte describe las piezas "pesadas" que transforman la explosión en movimiento.Cilindro: Fabricado en fundición gris. Es la cavidad donde ocurre la combustión. Se puede "rectificar" si se desgasta prematuramente.Pistón (Émbolo): Se desliza entre el PMS y el PMI. Está hecho de aleaciones de aluminio, magnesio y silicio. Tiene ranuras para los aros y un orificio para el perno que lo une a la biela.Aros (3 tipos):De compresión (Fuego): Material duro y resistente al calor (cromo), sella la cámara.Segundo aro: De acero negro, ayuda a la compresión.Rasca aceite: Compuesto por láminas y un expansor, limpia el aceite de las paredes del cilindro.Biela y Cigüeñal: Piezas de acero forjado. Su función es vital: transforman el movimiento lineal del pistón en el movimiento rotativo que necesitamos.Cárter: Recipiente (usualmente de aluminio) donde se aloja el cigüeñal y se deposita el aceite lubricante. 
-        2.Sistema de Distribución y Tapa de CilindroAquí explicás cómo el motor "respira" y se sincroniza.Tapa de Cilindro: Sella la parte superior. Contiene las válvulas, sus asientos, guías, resortes y retenes.Árbol de Levas: El "director de orquesta". Abre y cierra las válvulas de admisión y escape en el momento justo.Si el motor es cadenero, usa árbol de levas y balancines.Si el motor es varillero, usa una torreta de balancines.Balancines y Botadores: Son los intermediarios entre la leva y la válvula. Los balancines permiten regular la "luz de válvula" mediante un registro roscado.Cadena y Engranajes: Transmiten el giro del cigüeñal al árbol de levas.Dato clave de tus notas: El engranaje del cigüeñal siempre tiene la mitad de dientes que el del árbol de levas (relación 2:1). Por ejemplo, si el del cigüeñal tiene 12 dientes (Z12), el del árbol tendrá 24 (Z24).` 
-    }
-    /* Para agregar el Capítulo 2, borra las barras de comentario y completa:
-    ,
+    },
     "2": { 
-        id: "ID_DE_GOOGLE_DRIVE", 
-        t: "Capítulo 2", 
-        d: "Descripción aquí..." 
+        id: "AQUI_VA_EL_ID_DE_DRIVE", 
+        t: "Componentes del Bloque y Sistema de Distribución", 
+        d: `1. Componentes del Bloque y Movimiento
+Esta parte describe las piezas "pesadas" que transforman la explosión en movimiento.
+
+Cilindro: Fabricado en fundición gris. Es la cavidad donde ocurre la combustión. Se puede "rectificar" si se desgasta prematuramente.
+Pistón (Émbolo): Se desliza entre el PMS y el PMI. Está hecho de aleaciones de aluminio, magnesio y silicio. Tiene ranuras para los aros y un orificio para el perno que lo une a la biela.
+
+Aros (3 tipos):
+De compresión (Fuego): Material duro y resistente al calor (cromo), sella la cámara.
+Segundo aro: De acero negro, ayuda a la compresión.
+Rasca aceite: Compuesto por láminas y un expansor, limpia el aceite de las paredes del cilindro.
+
+Biela y Cigüeñal: Piezas de acero forjado. Su función es vital: transforman el movimiento lineal del pistón en el movimiento rotativo que necesitamos.
+Cárter: Recipiente (usualmente de aluminio) donde se aloja el cigüeñal y se deposita el aceite lubricante. 
+
+2. Sistema de Distribución y Tapa de Cilindro
+Aquí explicás cómo el motor "respira" y se sincroniza.
+
+Tapa de Cilindro: Sella la parte superior. Contiene las válvulas, sus asientos, guías, resortes y retenes.
+Árbol de Levas: El "director de orquesta". Abre y cierra las válvulas de admisión y escape en el momento justo.
+
+Si el motor es cadenero, usa árbol de levas y balancines.
+Si el motor es varillero, usa una torreta de balancines.
+
+Balancines y Botadores: Son los intermediarios entre la leva y la válvula. Los balancines permiten regular la "luz de válvula" mediante un registro roscado.
+Cadena y Engranajes: Transmiten el giro del cigüeñal al árbol de levas.
+
+Dato clave: El engranaje del cigüeñal siempre tiene la mitad de dientes que el del árbol de levas (relación 2:1). Por ejemplo, si el del cigüeñal tiene 12 dientes (Z12), el del árbol tendrá 24 (Z24).` 
     }
-    */
 };
 
 function init() {
@@ -257,13 +273,11 @@ function init() {
     const data = capitulos[capId];
 
     if (data) {
-        // Carga del video de Drive
         document.getElementById('main-video').src = "https://drive.google.com/file/d/" + data.id + "/preview";
         document.getElementById('cap-titulo').innerText = data.t;
         document.getElementById('cap-desc').innerText = data.d;
         document.title = "MS47 - " + data.t;
     } else {
-        // Si el capítulo no existe, carga el 1 por defecto
         window.location.href = "?cap=1";
     }
 
@@ -279,15 +293,11 @@ function renderBotones(actual) {
         link.href = "?cap=" + clave;
         link.className = "cap-btn " + (clave === actual ? "active" : "");
         link.innerText = "CAP " + clave;
-        
-        // Efecto visual al hacer clic
         link.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
-        
         contenedor.appendChild(link);
     }
 }
 
-// Iniciar sistema
 window.onload = init;
 </script>
 

@@ -235,7 +235,7 @@ Explosión y Expansión: Una chispa de la bujía enciende la mezcla comprimida, 
 Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta, expulsando los gases quemados hacia el exterior para reiniciar el ciclo.` 
     },
     "2": { 
-        id: "AQUI_VA_EL_ID_DE_DRIVE", 
+        id: "AQUI_VA_EL_ID_DE_DRIVE_2", 
         t: "Componentes del Bloque y Movimiento", 
         d: `1. Componentes del Bloque y Movimiento
 Esta parte describe las piezas "pesadas" que transforman la explosión en movimiento.
@@ -250,9 +250,9 @@ Rasca aceite: Compuesto por láminas y un expansor, limpia el aceite de las pare
 
 Biela y Cigüeñal: Piezas de acero forjado. Su función es vital: transforman el movimiento lineal del pistón en el movimiento rotativo que necesitamos.
 Cárter: Recipiente (usualmente de aluminio) donde se aloja el cigüeñal y se deposita el aceite lubricante.` 
-    }
-        "3": { 
-        id: "AQUI_VA_EL_ID_DE_DRIVE", 
+    },
+    "3": { 
+        id: "AQUI_VA_EL_ID_DE_DRIVE_3", 
         t: "Sistema de Distribución y Tapa de Cilindro", 
         d: `Aca se explica cómo el motor "respira" y se sincroniza.
 
@@ -266,27 +266,33 @@ Balancines y Botadores: Son los intermediarios entre la leva y la válvula. Los 
 Cadena y Engranajes: Transmiten el giro del cigüeñal al árbol de levas.
 
 Dato clave: El engranaje del cigüeñal siempre tiene la mitad de dientes que el del árbol de levas (relación 2:1). Por ejemplo, si el del cigüeñal tiene 12 dientes (Z12), el del árbol tendrá 24 (Z24).` 
-    }
-        "4": { 
-        id: "AQUI_VA_EL_ID_DE_DRIVE", 
+    },
+    "4": { 
+        id: "AQUI_VA_EL_ID_DE_DRIVE_4", 
         t: "El Sistema de Distribución (Sincronización)", 
-        d: `cómo se coordina el movimiento del "corazón" del motor (pistón) con su "respiración" (válvulas).
+        d: `Cómo se coordina el movimiento del "corazón" del motor (pistón) con su "respiración" (válvulas).
 
 Relación de giro (2:1): Este es el concepto más importante. El cigüeñal debe dar 2 vueltas completas para que el árbol de levas dé 1 sola vuelta. Esto es porque en un ciclo de 4 tiempos, las válvulas solo necesitan abrirse una vez.
 
-Regulación de Válvulas: * Se hace con el pistón en el PMS (Punto Muerto Superior) y el árbol de levas en fase de compresión (o "descanso").
+Regulación de Válvulas: Se hace con el pistón en el PMS (Punto Muerto Superior) y el árbol de levas en fase de compresión (o "descanso").
 
 Se usa una sonda de láminas (galga) que se pasa entre el registro y la válvula.
 
-El ajuste debe ser exacto: la sonda tiene que entrar justa pero deslizarse. Siempre hay que seguir la medida que recomienda el fabricante.
-.` 
-    }
+El ajuste debe ser exacto: la sonda tiene que entrar justa pero deslizarse. Siempre hay que seguir la medida que recomienda el fabricante.` 
+    },
     "5": { 
         id: "1v92Wx7Px1JjZMBQoREd5-ZqCHIjif7t6", 
         t: "Sistema de Encendido, Ignición y Carga", 
-        d: `.` 
-    },
-    
+        d: `El "sistema nervioso" de la moto:
+
+Encendido (Ignición): El Volante Magnético genera señal, el CDI la procesa y la Bobina de Alta manda la corriente a la Bujía para la explosión.
+
+Carga: El estator genera corriente alterna, el Rectificador/Regulador la pasa a continua (13V-14V) y mantiene viva la Batería.
+
+Arranque: El botón de arranque activa el Relay (Chanchita), que le da el "chispazo" de fuerza al Motor de Arranque para mover el cigüeñal.
+
+Señalización: La batería alimenta la Bocina, el Destellador de los giros y el Bulbo de Stop para las luces de freno.` 
+    }
 };
 
 function init() {

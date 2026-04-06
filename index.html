@@ -128,6 +128,7 @@
         .info-capitulo p {
             color: #ccc;
             font-size: 15px;
+            white-space: pre-line; /* Mantiene los saltos de línea del texto */
         }
 
         /* ===== GRILLA DE CAPÍTULOS ===== */
@@ -180,7 +181,7 @@
         }
 
         @media(max-width: 480px) {
-            .nav-links span { display: none; } /* Ahorra espacio en móviles */
+            .nav-links span { display: none; }
             .grid-capitulos { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
@@ -193,7 +194,7 @@
     <div class="nav-links">
       <a href="categorias.html">🎮<span> Juegos</span></a>
       <a href="https://gam.onl/" target="_blank" class="btn-jugar">🕹️<span> Online</span></a>
-      <a href="https://www.youtube.com/@master-sensei47" target="_blank">🎬<span> YouTube</span></a>
+      <a href="https://www.youtube.com/@mastersensei-47" target="_blank">🎬<span> YouTube</span></a>
       <a href="https://www.instagram.com/master__sensei47" target="_blank">📸<span> Instagram</span></a>
     </div>
   </div>
@@ -206,7 +207,7 @@
         </div>
         <div class="info-capitulo">
             <h1 id="cap-titulo">Cargando...</h1>
-            <p id="cap-desc">Por favor, selecciona un capítulo de la lista inferior para comenzar la reproducción.</p>
+            <p id="cap-desc">Cargando información del video...</p>
         </div>
     </section>
 
@@ -218,9 +219,13 @@
 <script>
 /**
  * BASE DE DATOS DE CAPÍTULOS
+ * Importante: Usamos ` (comilla invertida) para textos con saltos de línea.
  */
 const capitulos = {
-    "1": { id: "1v92Wx7Px1JjZMBQoREd5-ZqCHIjif7t6", t: "Capítulo 1", d: "El funcionamiento se divide en cuatro fases principales según el movimiento del pistón dentro del cilindro:
+    "1": { 
+        id: "1v92Wx7Px1JjZMBQoREd5-ZqCHIjif7t6", 
+        t: "Motor de 4 Tiempos", 
+        d: `El funcionamiento se divide en cuatro fases principales según el movimiento del pistón dentro del cilindro:
 
 Admisión: El pistón baja desde el punto muerto superior (PMS) al punto muerto inferior (PMI). En este proceso, entra la mezcla de aire y combustible al cilindro.
 
@@ -228,51 +233,40 @@ Compresión: El pistón sube del PMI al PMS, comprimiendo la mezcla. Esto aument
 
 Explosión y Expansión: Una chispa de la bujía enciende la mezcla comprimida, generando una explosión que empuja con fuerza el pistón hacia abajo (al PMI). Esta es la fase que genera la fuerza del motor.
 
-Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta, expulsando los gases quemados hacia el exterior para reiniciar el ciclo." },
-    "2": { id: "1ma6lGDjxb4noqqP5_NZvjmGInzGCseWr", t: "Capítulo 2", d: "" },
-    "3": { id: "1nWVHVZr1JzlpVausPqqxZ0TvSZuMN9rC", t: "Capítulo 3", d: "" },
-    "4": { id: "1O0ieq-HpS-xZIs5c16fJehFLprQ-PiAe", t: "Capítulo 4", d: "" },
-    "6": { id: "1jONSJ3SOa9YWF5UjKxwlfkLjfLZO_SPJ", t: "Capítulo 6", d: "" },
-    "7": { id: "1T_V7yXiCTPQCyjmFs0uUQTjUnaItLTxU", t: "Capítulo 7", d: "" },
-    "8": { id: "1AMfEPMs0gZ3RG52-1sJakOoUOlt-qn0L", t: "Capítulo 8", d: "" },
-    "9": { id: "1GBs8_KNKU-rnKsQspugKI7gu6kUqrdD3", t: "Capítulo 9", d: "" },
-    "10": { id: "1nPaGMzpvsxIObP7ZuxeWT1mMSriclb7_", t: "Capítulo 10", d: "" },
-    "11": { id: "1W67SGlDaTfoxB0FYDKjd8dkn5p_ef9bV", t: "Capítulo 11", d: "" },
-    "12": { id: "1mrvSWp1sEalT8VLZnuWMhL2-sq4F2ydg", t: "Capítulo 12", d: "" },
-    "14": { id: "1RU1xlUi59eQnXrAORE6J81vAdIxc6xJQ", t: "Capítulo 14", d: "" },
-    "15": { id: "1Aq2yCRc1NL0961XIH77zu21CIUuwBmZV", t: "Capítulo 15", d: "" },
-    "16": { id: "11VcoFde_pksT1sBkWp447Oi3LJhjiULf", t: "Capítulo 16", d: "" },
-    "17": { id: "1-A51ANW5UEUFzLmd_E4vz7p7hyg5B9Cx", t: "Capítulo 17", d: "" },
-    "18": { id: "1ra0N9BulhEBDDWIR9GLJ24k2qq6sbrCE", t: "Capítulo 18", d: "" },
-    "19": { id: "1sFXxWpEqmwSP7e2_7OYuNQRlw9rwYP7W", t: "Capítulo 19", d: "" },
-    "20": { id: "1tD8GUJ4rrYhm6ByNdIFjS6O4cZywruBq", t: "Capítulo 20", d: "" }
+Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta, expulsando los gases quemados hacia el exterior para reiniciar el ciclo.` 
+    }
+    /* Para agregar el Capítulo 2, borra las barras de comentario y completa:
+    ,
+    "2": { 
+        id: "ID_DE_GOOGLE_DRIVE", 
+        t: "Capítulo 2", 
+        d: "Descripción aquí..." 
+    }
+    */
 };
 
-/**
- * Función para renderizar el contenido basado en la URL
- */
 function init() {
     const params = new URLSearchParams(window.location.search);
     const capId = params.get('cap') || "1";
     const data = capitulos[capId];
 
     if (data) {
-        // Carga del video: Usamos el preview limpio para evitar bloqueos de Google
+        // Carga del video de Drive
         document.getElementById('main-video').src = "https://drive.google.com/file/d/" + data.id + "/preview";
-        document.getElementById('cap-titulo').innerText = "O11CE - " + data.t;
+        document.getElementById('cap-titulo').innerText = data.t;
         document.getElementById('cap-desc').innerText = data.d;
         document.title = "MS47 - " + data.t;
+    } else {
+        // Si el capítulo no existe, carga el 1 por defecto
+        window.location.href = "?cap=1";
     }
 
     renderBotones(capId);
 }
 
-/**
- * Genera la grilla de botones y marca el activo
- */
 function renderBotones(actual) {
     const contenedor = document.getElementById('btn-container');
-    contenedor.innerHTML = ""; // Limpiar antes de llenar
+    contenedor.innerHTML = ""; 
 
     for (let clave in capitulos) {
         const link = document.createElement('a');
@@ -280,14 +274,14 @@ function renderBotones(actual) {
         link.className = "cap-btn " + (clave === actual ? "active" : "");
         link.innerText = "CAP " + clave;
         
-        // Al hacer clic, enviamos al usuario arriba para que vea el video
+        // Efecto visual al hacer clic
         link.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
         
         contenedor.appendChild(link);
     }
 }
 
-// Ejecutar al cargar la página
+// Iniciar sistema
 window.onload = init;
 </script>
 

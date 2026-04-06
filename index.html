@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS47 - O11CE Nueva Generación</title>
+
+    <style>
+        /* Estilos Base Estables */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+        }
+        
+        body { 
+            background: #0a0a0a; 
+            color: white; 
+            overflow-x: hidden; 
+            line-height: 1.6;
+        }
+
+        /* ===== NAVBAR MS47 ===== */
+        .navbar {
+            width: 100%; 
+            background: #111; 
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            z-index: 1000; 
+            border-bottom: 2px solid #ff0000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .nav-container {
+            max-width: 1400px; 
+            margin: auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 10px;
+        }
+        
+        .logo {
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #fff;
+            text-shadow: 0 0 10px #ff0000; 
+            text-decoration: none; 
+            margin-bottom: 8px;
+        }
+        
+        .nav-links { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: center; 
+            width: 100%; 
+        }
+        
+        .nav-links a {
+            color: #fff; 
+            text-decoration: none; 
+            background: #222;
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 14px; 
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #ff0000;
+            border-color: #fff;
+        }
+
+        .btn-jugar { border-color: #00ff00 !important; }
+
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        main { 
+            margin-top: 140px; 
+            padding: 15px; 
+            max-width: 1000px; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+
+        /* ===== REPRODUCTOR Y TEXTOS ===== */
+        .reproductor-box {
+            background: #000; 
+            border-radius: 10px; 
+            overflow: hidden;
+            border: 1px solid #333; 
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+            margin-bottom: 25px;
+        }
+        
+        .video-container { 
+            position: relative; 
+            padding-top: 56.25%; 
+            background: #000; 
+        }
+        
+        .video-container iframe { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            border: none;
+        }
+
+        .info-capitulo { 
+            padding: 20px; 
+            background: #111; 
+            border-top: 2px solid #ff0000; 
+        }
+        
+        .info-capitulo h1 { 
+            font-size: 22px; 
+            color: #fff; 
+            margin-bottom: 10px;
+        }
+
+        .info-capitulo p {
+            color: #ccc;
+            font-size: 15px;
+        }
+
+        /* ===== GRILLA DE CAPÍTULOS ===== */
+        .seccion-titulo {
+            margin: 20px 0 10px;
+            font-size: 18px;
+            border-left: 4px solid #ff0000;
+            padding-left: 10px;
+            text-transform: uppercase;
+        }
+
+        .grid-capitulos {
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 8px; 
+            margin-top: 10px;
+        }
+        
+        .cap-btn {
+            background: #1b1b1b; 
+            border: 1px solid #333; 
+            color: white;
+            padding: 12px 0; 
+            text-align: center; 
+            border-radius: 6px;
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 13px; 
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .cap-btn:hover {
+            background: #333;
+        }
+        
+        .cap-btn.active { 
+            background: #ff0000; 
+            border-color: #fff; 
+            box-shadow: 0 0 10px #ff0000; 
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media(min-width: 769px) {
+            .nav-container { flex-direction: row; padding: 10px 20px; justify-content: space-between; }
+            .logo { margin-bottom: 0; }
+            .nav-links { width: auto; }
+            main { margin-top: 90px; }
+            .grid-capitulos { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+        }
+
+        @media(max-width: 480px) {
+            .nav-links span { display: none; } /* Ahorra espacio en móviles */
+            .grid-capitulos { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">MS47</a>
+    <div class="nav-links">
+      <a href="categorias.html">🎮<span> Juegos</span></a>
+      <a href="https://gam.onl/" target="_blank" class="btn-jugar">🕹️<span> Online</span></a>
+      <a href="https://www.youtube.com/@mastersensei-47" target="_blank">🎬<span> YouTube</span></a>
+      <a href="https://www.instagram.com/master__sensei47" target="_blank">📸<span> Instagram</span></a>
+    </div>
+  </div>
+</nav>
+
+<main>
+    <section class="reproductor-box">
+        <div class="video-container">
+            <iframe id="main-video" src="" allowfullscreen></iframe>
+        </div>
+        <div class="info-capitulo">
+            <h1 id="cap-titulo">Cargando...</h1>
+            <p id="cap-desc">Por favor, selecciona un capítulo de la lista inferior para comenzar la reproducción.</p>
+        </div>
+    </section>
+
+    <h2 class="seccion-titulo">Episodios Disponibles</h2>
+    <div class="grid-capitulos" id="btn-container">
+        </div>
+</main>
+
+<script>
+/**
+ * BASE DE DATOS DE CAPÍTULOS
+ */
+const capitulos = {
+    "1": { id: "1jAOKTdH6XzdVnW_wQe-rXP4-M6ZoKZmO", t: "Capítulo 1", d: "Gabo comienza su aventura en el IAD. El fútbol cambia para siempre con su llegada." },
+    "2": { id: "1ma6lGDjxb4noqqP5_NZvjmGInzGCseWr", t: "Capítulo 2", d: "El primer entrenamiento pone a prueba la resistencia física y mental de Gabo." },
+    "3": { id: "1nWVHVZr1JzlpVausPqqxZ0TvSZuMN9rC", t: "Capítulo 3", d: "Lorenzo marca su territorio. La rivalidad por el puesto de 10 apenas comienza." },
+    "4": { id: "1O0ieq-HpS-xZIs5c16fJehFLprQ-PiAe", t: "Capítulo 4", d: "Secretos del pasado salen a la luz, poniendo en duda la beca de Gabo en el instituto." },
+    "6": { id: "1jONSJ3SOa9YWF5UjKxwlfkLjfLZO_SPJ", t: "Capítulo 6", d: "Los Halcones Dorados se preparan para su primer gran enfrentamiento amistoso." },
+    "7": { id: "1T_V7yXiCTPQCyjmFs0uUQTjUnaItLTxU", t: "Capítulo 7", d: "Vitto experimenta con nuevas formaciones mientras Lorenzo busca liderar a su modo." },
+    "8": { id: "1AMfEPMs0gZ3RG52-1sJakOoUOlt-qn0L", t: "Capítulo 8", d: "Un viaje inesperado pone a prueba la convivencia y la unión de todo el equipo." },
+    "9": { id: "1GBs8_KNKU-rnKsQspugKI7gu6kUqrdD3", t: "Capítulo 9", d: "El gran debut. Gabo debe demostrar en la cancha que merece portar la camiseta." },
+    "10": { id: "1nPaGMzpvsxIObP7ZuxeWT1mMSriclb7_", t: "Capítulo 10", d: "Después del partido, las consecuencias de las decisiones tomadas afectan al grupo." },
+    "11": { id: "1W67SGlDaTfoxB0FYDKjd8dkn5p_ef9bV", t: "Capítulo 11", d: "Nuevas oportunidades y visitas inesperadas en el IAD agitan el ambiente escolar." },
+    "12": { id: "1mrvSWp1sEalT8VLZnuWMhL2-sq4F2ydg", t: "Capítulo 12", d: "La competencia interna se vuelve feroz. Nadie tiene el puesto asegurado." },
+    "14": { id: "1RU1xlUi59eQnXrAORE6J81vAdIxc6xJQ", t: "Capítulo 14", d: "Problemas extra-deportivos obligan a los chicos a trabajar su amistad." },
+    "15": { id: "1Aq2yCRc1NL0961XIH77zu21CIUuwBmZV", t: "Capítulo 15", d: "Una lesión inesperada cambia los planes tácticos para el próximo gran torneo." },
+    "16": { id: "11VcoFde_pksT1sBkWp447Oi3LJhjiULf", t: "Capítulo 16", d: "Gabo entrena por su cuenta para perfeccionar su técnica de tiro libre." },
+    "17": { id: "1-A51ANW5UEUFzLmd_E4vz7p7hyg5B9Cx", t: "Capítulo 17", d: "Rivalidades de otros institutos se presentan en el IAD para un desafío previo." },
+    "18": { id: "1ra0N9BulhEBDDWIR9GLJ24k2qq6sbrCE", t: "Capítulo 18", d: "Lorenzo intenta recuperar la capitanía con una jugada arriesgada." },
+    "19": { id: "1sFXxWpEqmwSP7e2_7OYuNQRlw9rwYP7W", t: "Capítulo 19", d: "Últimos detalles antes de la final. Los nervios están a flor de piel." },
+    "20": { id: "1tD8GUJ4rrYhm6ByNdIFjS6O4cZywruBq", t: "Capítulo 20", d: "El desenlace de la primera etapa. Un final que dejará a todos sorprendidos." }
+};
+
+/**
+ * Función para renderizar el contenido basado en la URL
+ */
+function init() {
+    const params = new URLSearchParams(window.location.search);
+    const capId = params.get('cap') || "1";
+    const data = capitulos[capId];
+
+    if (data) {
+        // Carga del video: Usamos el preview limpio para evitar bloqueos de Google
+        document.getElementById('main-video').src = "https://drive.google.com/file/d/" + data.id + "/preview";
+        document.getElementById('cap-titulo').innerText = "O11CE - " + data.t;
+        document.getElementById('cap-desc').innerText = data.d;
+        document.title = "MS47 - " + data.t;
+    }
+
+    renderBotones(capId);
+}
+
+/**
+ * Genera la grilla de botones y marca el activo
+ */
+function renderBotones(actual) {
+    const contenedor = document.getElementById('btn-container');
+    contenedor.innerHTML = ""; // Limpiar antes de llenar
+
+    for (let clave in capitulos) {
+        const link = document.createElement('a');
+        link.href = "?cap=" + clave;
+        link.className = "cap-btn " + (clave === actual ? "active" : "");
+        link.innerText = "CAP " + clave;
+        
+        // Al hacer clic, enviamos al usuario arriba para que vea el video
+        link.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+        
+        contenedor.appendChild(link);
+    }
+}
+
+// Ejecutar al cargar la página
+window.onload = init;
+</script>
+
+</body>
+</html>

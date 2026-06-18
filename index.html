@@ -131,6 +131,23 @@
             white-space: pre-line; 
         }
 
+        /* Contenedor dinámico de imágenes */
+        .img-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .cap-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #444;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
         /* ===== GRILLA DE CAPÍTULOS ===== */
         .seccion-titulo {
             margin: 20px 0 10px;
@@ -208,17 +225,20 @@
         <div class="info-capitulo">
             <h1 id="cap-titulo">Cargando...</h1>
             <p id="cap-desc">Cargando información del video...</p>
+            <div id="img-gallery" class="img-container"></div>
         </div>
     </section>
 
     <h2 class="seccion-titulo">Episodios Disponibles</h2>
     <div class="grid-capitulos" id="btn-container">
-        </div>
+    </div>
 </main>
 
 <script>
 /**
  * BASE DE DATOS DE CAPÍTULOS
+ * "id" puede ser un link de Drive (largo) o de YouTube (corto, ej: 11 caracteres)
+ * "imagenes" es un array con las URLs o nombres de archivo de las fotos a mostrar.
  */
 const capitulos = {
     "1": { 
@@ -232,97 +252,94 @@ Compresión: El pistón sube del PMI al PMS, comprimiendo la mezcla. Esto aument
 
 Explosión y Expansión: Una chispa de la bujía enciende la mezcla comprimida, generando una explosión que empuja con fuerza el pistón hacia abajo (al PMI). Esta es la fase que genera la fuerza del motor.
 
-Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta, expulsando los gases quemados hacia el exterior para reiniciar el ciclo.` 
+Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta, expulsando los gases quemados hacia el exterior para reiniciar el ciclo.`,
+        imagenes: ["https://upload.wikimedia.org/wikipedia/commons/a/a6/4-Stroke-Engine.gif"] 
     },
     "2": { 
         id: "AQUI_VA_EL_ID_DE_DRIVE_2", 
-        t: "Componentes del Bloque y Movimiento", 
-        d: `1. Componentes del Bloque y Movimiento
-Esta parte describe las piezas "pesadas" que transforman la explosión en movimiento.
+        t: "Componentes del Bloque y Cilindrada", 
+        d: `Componentes pesados que transforman la explosión en movimiento:
 
-Cilindro: Fabricado en fundición gris. Es la cavidad donde ocurre la combustión. Se puede "rectificar" si se desgasta prematuramente.
-Pistón (Émbolo): Se desliza entre el PMS y el PMI. Está hecho de aleaciones de aluminio, magnesio y silicio. Tiene ranuras para los aros y un orificio para el perno que lo une a la biela.
+Cilindro: Cavidad donde ocurre la combustión.
+Pistón: Se desliza entre el PMS y el PMI.
+Aros: De compresión (fuego), segundo aro y rasca aceite.
+Biela y Cigüeñal: Transforman el movimiento lineal en rotativo.
 
-Aros (3 tipos):
-De compresión (Fuego): Material duro y resistente al calor (cromo), sella la cámara.
-Segundo aro: De acero negro, ayuda a la compresión.
-Rasca aceite: Compuesto por láminas y un expansor, limpia el aceite de las paredes del cilindro.
+FÓRMULA DE CILINDRADA MATEMÁTICA:
+Cilindrada = (Pi x Diámetro² / 4) x Carrera
 
-Biela y Cigüeñal: Piezas de acero forjado. Su función es vital: transforman el movimiento lineal del pistón en el movimiento rotativo que necesitamos.
-Cárter: Recipiente (usualmente de aluminio) donde se aloja el cigüeñal y se deposita el aceite lubricante.` 
+Ejemplo práctico en la imagen: Motor de 52mm de diámetro y 50mm de carrera.
+Cuenta: (3.1416 x 2704 / 4) x 50 = 106.186 mm³ = 106 cc (Típico motor 110cc).`,
+        imagenes: ["13803.jpg"]
     },
     "3": { 
         id: "AQUI_VA_EL_ID_DE_DRIVE_3", 
-        t: "Sistema de Distribución y Tapa de Cilindro", 
+        t: "Sistema de Distribución (OHV Varillero)", 
         d: `Aca se explica cómo el motor "respira" y se sincroniza.
 
 Tapa de Cilindro: Sella la parte superior. Contiene las válvulas, sus asientos, guías, resortes y retenes.
-Árbol de Levas: El "director de orquesta". Abre y cierra las válvulas de admisión y escape en el momento justo.
+Árbol de Levas: El "director de orquesta". Abre y cierra las válvulas en el momento justo.
 
-Si el motor es cadenero, usa árbol de levas y balancines.
-Si el motor es varillero, usa una torreta de balancines.
+Motor OHV (Varillero): El árbol de levas está abajo en el block (junto al cigüeñal). Usa botadores y varillas largas para empujar los balancines arriba en la tapa de cilindros.
 
-Balancines y Botadores: Son los intermediarios entre la leva y la válvula. Los balancines permiten regular la "luz de válvula" mediante un registro roscado.
-Cadena y Engranajes: Transmiten el giro del cigüeñal al árbol de levas.
-
-Dato clave: El engranaje del cigüeñal siempre tiene la mitad de dientes que el del árbol de levas (relación 2:1). Por ejemplo, si el del cigüeñal tiene 12 dientes (Z12), el del árbol tendrá 24 (Z24).` 
+Dato clave: El engranaje del cigüeñal siempre tiene la mitad de dientes que el del árbol de levas (relación 2:1).`,
+        imagenes: ["13800.jpg"]
     },
     "4": { 
         id: "AQUI_VA_EL_ID_DE_DRIVE_4", 
-        t: "El Sistema de Distribución (Sincronización)", 
-        d: `Cómo se coordina el movimiento del "corazón" del motor (pistón) con su "respiración" (válvulas).
+        t: "Sincronización y Motor Cadenero (OHC)", 
+        d: `Cómo se coordina el movimiento del pistón con las válvulas.
 
-Relación de giro (2:1): Este es el concepto más importante. El cigüeñal debe dar 2 vueltas completas para que el árbol de levas dé 1 sola vuelta. Esto es porque en un ciclo de 4 tiempos, las válvulas solo necesitan abrirse una vez.
+Motor OHC (Cadenero): A diferencia del varillero, el árbol de levas está arriba, en la tapa de cilindros. Usa una cadena de distribución impulsada por el cigüeñal para mover la leva.
 
-Regulación de Válvulas: Se hace con el pistón en el PMS (Punto Muerto Superior) y el árbol de levas en fase de compresión (o "descanso").
+Relación de giro (2:1): El cigüeñal debe dar 2 vueltas completas para que la leva dé 1 sola vuelta. 
 
-Se usa una sonda de láminas (galga) que se pasa entre el registro y la válvula.
-
-El ajuste debe ser exacto: la sonda tiene que entrar justa pero deslizarse. Siempre hay que seguir la medida que recomienda el fabricante.` 
+Regulación de Válvulas: Se hace con el pistón en el PMS y el árbol de levas en compresión. Se usa una sonda de láminas (galga) que se pasa entre el registro y la válvula.`,
+        imagenes: ["13801.jpg"]
     },
     "5": { 
         id: "1v92Wx7Px1JjZMBQoREd5-ZqCHIjif7t6", 
         t: "Sistema de Encendido, Ignición y Carga", 
-        d: `El "sistema nervioso" de la moto:
+        d: `El "sistema nervioso" de la moto, dividido en dos etapas:
 
-Encendido (Ignición): El Volante Magnético genera señal, el CDI la procesa y la Bobina de Alta manda la corriente a la Bujía para la explosión.
+Ignición (Chispa): El Volante Magnético genera la señal con el sensor (pickup), el CDI de 4 contactos procesa esa señal y manda la orden a la Bobina de Alta Tensión. Esta eleva el voltaje y lo manda a la Bujía para generar la chispa.
 
-Carga: El estator genera corriente alterna, el Rectificador/Regulador la pasa a continua (13V-14V) y mantiene viva la Batería.
-
-Arranque: El botón de arranque activa el Relay (Chanchita), que le da el "chispazo" de fuerza al Motor de Arranque para mover el cigüeñal.
-
-Señalización: La batería alimenta la Bocina, el Destellador de los giros y el Bulbo de Stop para las luces de freno.` 
+Carga: El estator (bobinado) genera corriente alterna. El Regulador/Rectificador la transforma a corriente continua estabilizada (entre 13V y 14.5V) para recargar la Batería y evitar que se quemen las luces o los fusibles.`,
+        imagenes: ["13802.jpg"]
     },
     "6": { 
-        id: "AQUI_VA_EL_ID_DE_DRIVE_6", 
+        id: "qJk2B_H496M", 
         t: "Embrague y Transmisión", 
         d: `Cómo controlamos la fuerza del motor hacia la rueda:
 
-El Embrague: Su función es acoplar y desacoplar el movimiento del cigüeñal hacia la caja de cambios. Al apretar la manija, separamos los discos de fricción (fibra) de los discos separadores (acero), cortando la transmisión de fuerza para poder cambiar de marcha sin romper nada. Generalmente está sumergido en aceite.
+El Embrague: Su función es acoplar y desacoplar el movimiento del cigüeñal hacia la caja de cambios. Al apretar la manija, separamos los discos de fricción (fibra) de los discos separadores (acero), cortando la transmisión de fuerza para poder pasar los cambios.
 
-Caja de Cambios: Un conjunto de engranajes ubicados en dos ejes (primario y secundario). Nos permite multiplicar la fuerza del motor (marchas bajas como 1ra y 2da) o ganar velocidad final (marchas altas como 4ta y 5ta).` 
+Caja de Cambios: Un conjunto de engranajes ubicados en dos ejes (primario y secundario). Nos permite multiplicar la fuerza del motor (marchas bajas) o ganar velocidad final (marchas altas).`,
+        imagenes: ["https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Clutch_concept.svg/500px-Clutch_concept.svg.png"]
     },
     "7": { 
-        id: "AQUI_VA_EL_ID_DE_DRIVE_7", 
+        id: "r3_M_EOfhG0", 
         t: "Sistema de Alimentación", 
-        d: `El encargado de preparar la "comida" del motor: la mezcla exacta de aire y nafta.
+        d: `El encargado de preparar la "comida" del motor: la mezcla de aire y nafta.
 
-Carburador: Es un componente mecánico que funciona por vacío. Cuando el pistón baja en la fase de admisión, aspira aire que pasa por el carburador, arrastrando partículas de nafta a través de los "chicleres" (surtidores) para crear una niebla explosiva.
+Carburador: Funciona por vacío. Cuando el pistón baja, aspira aire que pasa por el carburador, arrastrando partículas de nafta a través de los chicleres para crear una mezcla explosiva.
 
-Inyección Electrónica (EFI): En motos más modernas, una computadora (ECU) calcula mediante sensores cuánto aire está entrando y le ordena a un inyector rociar la cantidad exacta de nafta a presión, logrando un consumo más eficiente.
+Inyección Electrónica (EFI): Una computadora (ECU) calcula mediante sensores cuánto aire entra y le ordena a un inyector rociar nafta a presión, logrando más eficiencia.
 
-Filtro de Aire: Vital para evitar que entre tierra al cilindro, lo cual actuaría como una lija desgastando el pistón y los aros.` 
+Filtro de Aire: Vital para evitar que entre polvo al motor, lo cual actuaría como lija.`,
+        imagenes: ["https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Carburetor.svg/500px-Carburetor.svg.png"]
     },
     "8": { 
-        id: "AQUI_VA_EL_ID_DE_DRIVE_8", 
+        id: "r4mG3Y_W014", 
         t: "Sistemas de Lubricación y Refrigeración", 
-        d: `Los sistemas de protección del motor:
+        d: `Los sistemas que mantienen vivo al motor:
 
-Lubricación: Evita que los metales se fundan por la fricción. La bomba de aceite chupa el lubricante del cárter, lo pasa por un filtro para retener impurezas y lo sube a presión hasta la tapa de cilindros para lubricar el árbol de levas, bajando luego por gravedad.
+Lubricación: Evita que los metales se fundan. La bomba chupa aceite del cárter, lo filtra y lo sube a presión hasta la tapa de cilindros para lubricar la leva y balancines, bajando luego por gravedad.
 
-Refrigeración: Disipa el exceso de calor de las explosiones.
+Refrigeración: 
 - Por Aire: El cilindro tiene "aletas" metálicas que el viento enfría al avanzar.
-- Por Líquido: Usa un radiador, conductos de agua alrededor del cilindro y una bomba de agua, manteniendo una temperatura de trabajo mucho más estable.` 
+- Por Líquido: Usa un radiador, conductos de agua alrededor del cilindro y una bomba, estabilizando mucho mejor la temperatura.`,
+        imagenes: ["https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Internal_combustion_engine_cooling_system.svg/500px-Internal_combustion_engine_cooling_system.svg.png"]
     }
 };
 
@@ -332,10 +349,37 @@ function init() {
     const data = capitulos[capId];
 
     if (data) {
-        document.getElementById('main-video').src = "https://drive.google.com/file/d/" + data.id + "/preview";
+        const iframe = document.getElementById('main-video');
+        
+        // Detección automática de tipo de video (YouTube o Drive)
+        if(data.id && data.id.length === 11) {
+            // Si el ID tiene 11 caracteres, es de YouTube
+            iframe.src = "https://www.youtube.com/embed/" + data.id + "?autoplay=0";
+        } else if(data.id && data.id.length > 20) {
+            // Si es largo, es de Google Drive
+            iframe.src = "https://drive.google.com/file/d/" + data.id + "/preview";
+        } else {
+            // Si no hay ID válido, mostramos un video de placeholder
+            iframe.src = "https://www.youtube.com/embed/dQw4w9WgXcQ"; 
+        }
+
         document.getElementById('cap-titulo').innerText = data.t;
         document.getElementById('cap-desc').innerText = data.d;
         document.title = "MS47 - " + data.t;
+
+        // Renderizado de las imágenes
+        const galeria = document.getElementById('img-gallery');
+        galeria.innerHTML = ""; // Limpiamos galería anterior
+        
+        if(data.imagenes && data.imagenes.length > 0) {
+            data.imagenes.forEach(imgSrc => {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.className = 'cap-img';
+                img.alt = 'Esquema de ' + data.t;
+                galeria.appendChild(img);
+            });
+        }
     } else {
         window.location.href = "?cap=1";
     }

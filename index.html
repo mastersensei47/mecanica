@@ -102,7 +102,7 @@
             position: relative; 
             padding-top: 56.25%; 
             background: #000; 
-            display: none; /* Se oculta si no hay video */
+            display: none; 
         }
         
         .video-container iframe { 
@@ -172,7 +172,6 @@
             margin-top: 10px;
         }
 
-        /* Contenedor especial para el video extra para que ocupe todo el ancho */
         .grid-extra {
             display: grid;
             grid-template-columns: 1fr;
@@ -249,7 +248,7 @@
         </div>
         <div class="info-capitulo">
             <h1 id="cap-titulo">Cargando...</h1>
-            <p id="alerta-vid" class="alerta-video">⚠️ Falta cargar el ID del video en el código.</p>
+            <p id="alerta-vid" class="alerta-video">⚠️ Falta cargar el ID del video para este capítulo.</p>
             <p id="cap-desc">Cargando información...</p>
             <div id="img-gallery" class="img-container"></div>
         </div>
@@ -263,10 +262,6 @@
 </main>
 
 <script>
-/**
- * BASE DE DATOS DE CAPÍTULOS
- * Para que los videos funcionen, reemplazá "ID_DRIVE_ACA" por el ID real de Google Drive.
- */
 const capitulos = {
     "1": { 
         id: "1v92Wx7Px1JjZMBQoREd5-ZqCHIjif7t6", 
@@ -367,7 +362,7 @@ Refrigeración:
         imagenes: ["https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Internal_combustion_engine_cooling_system.svg/500px-Internal_combustion_engine_cooling_system.svg.png"]
     },
     "9": { 
-        id: "ID_DRIVE_ACA", 
+        id: "1LpMMC9Ug53cfuSa-0q5kG4_rvug1ePLk", 
         t: "Clase Magistral de Desarme (29 min)", 
         d: `En este material audiovisual analizamos a fondo el ciclo de combustión y desarmamos piezas en tiempo real.
 
@@ -377,13 +372,14 @@ Refrigeración:
 15:02 Lubricación
 21:12 Relación de compresión
 23:41 Distribución mediante válvulas & válvulas de potencia
-27:18 Inyección directa`,
+27:18 Inyección directa
+
+ADVERTENCIA: El material presentado puede diferir en algunos detalles respecto al contenido teórico, aunque mantiene el mismo principio de funcionamiento.`,
         imagenes: ["{9E0E6CB7-084E-4734-B6DA-EE9001970923}.jpg"]
     }
 };
 
 function init() {
-    // Leer qué capítulo pidió el usuario en la URL
     const params = new URLSearchParams(window.location.search);
     const capId = params.get('cap') || "1";
     const data = capitulos[capId];
@@ -393,14 +389,11 @@ function init() {
         const vidContainer = document.getElementById('vid-container');
         const alerta = document.getElementById('alerta-vid');
         
-        // Logica para saber si hay video cargado o es el texto de relleno
         if (data.id === "ID_DRIVE_ACA" || data.id === "") {
-            // No hay video
             vidContainer.style.display = "none";
             iframe.src = "";
             alerta.style.display = "block";
         } else {
-            // Sí hay video
             vidContainer.style.display = "block";
             alerta.style.display = "none";
             
@@ -411,12 +404,10 @@ function init() {
             }
         }
 
-        // Cargar textos
         document.getElementById('cap-titulo').innerText = data.t;
         document.getElementById('cap-desc').innerText = data.d;
         document.title = "MS47 - " + data.t;
 
-        // Cargar las imágenes
         const galeria = document.getElementById('img-gallery');
         galeria.innerHTML = ""; 
         
@@ -426,10 +417,9 @@ function init() {
                 img.src = imgSrc;
                 img.className = 'cap-img';
                 img.alt = 'Esquema MS47 - ' + data.t;
-                // Si la imagen falla en cargar, le ponemos un borde rojo para avisarte
                 img.onerror = function() {
                     this.style.border = "2px solid red";
-                    this.alt = "⚠️ ERROR: No se encontró la imagen " + imgSrc;
+                    this.alt = "⚠️ ERROR: No se encontró la imagen local " + imgSrc;
                 };
                 galeria.appendChild(img);
             });
@@ -451,11 +441,8 @@ function renderBotones(actual) {
     for (let clave in capitulos) {
         const link = document.createElement('a');
         link.className = "cap-btn " + (clave === actual ? "active" : "");
-        
-        // Configuración para que recargue y cambie de capítulo
         link.href = "?cap=" + clave;
 
-        // Si es el capítulo 9 (el de 29 min), lo mandamos al contenedor de abajo
         if (clave === "9") {
             link.innerText = "⭐ CAPÍTULO EXTENSO (29 MIN) ⭐";
             link.classList.add("btn-extenso");
@@ -467,7 +454,6 @@ function renderBotones(actual) {
     }
 }
 
-// Inicializar cuando carga la página
 window.onload = init;
 </script>
 

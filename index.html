@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS47 - mecanica de motos</title>
+    <!-- Evita que el navegador (sobre todo Chrome en Android) sirva una versión vieja
+         de este archivo desde la caché. Sin esto, GitHub Pages puede mostrar la
+         página anterior aunque el archivo ya se haya actualizado. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>MS47 - O11CE Nueva Generación</title>
 
     <style>
         /* ===== ESTILOS BASE ===== */
@@ -161,8 +167,8 @@
             border: none;
         }
 
-        /* Overlay "Toca para reproducir": evita que el iframe (sobre todo el de Drive)
-           se monte solo y muestre su interfaz rota/incompleta en celular. */
+        /* Overlay "Toca para reproducir": el video no se carga hasta que el usuario
+           lo pide explícitamente, evitando reproducción o descarga automática. */
         .play-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -198,6 +204,9 @@
         .play-texto {
             color: #ccc;
             font-size: 13px;
+            text-align: center;
+            line-height: 1.5;
+            padding: 0 20px;
         }
 
         /* Mientras la tarjeta está cerrada, no mostramos el cuerpo (ahorra espacio en mobile) */
@@ -465,12 +474,25 @@
 
 <script>
 /**
- * BASE DE DATOS ACTUALIZADA
- * Ahora 'videos' es una lista de objetos, donde podés poner el 'id' y el 'titulo' de cada video.
+ * BASE DE DATOS DE CAPÍTULOS
+ * 
+ * CÓMO AGREGAR UN VIDEO DE YOUTUBE (no listado):
+ * 1. Subí el video a YouTube como "No listado" (no "Privado", porque privado no se puede embeber).
+ * 2. Copiá el link del video, por ejemplo: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+ * 3. El "id" que necesitás es la parte que está después de "v=": dQw4w9WgXcQ (siempre 11 caracteres).
+ *    - Si el link es corto (youtu.be/dQw4w9WgXcQ), el id es lo que está después de youtu.be/
+ * 4. Pegalo así en el capítulo correspondiente:
+ *    videos: [ { id: "dQw4w9WgXcQ", titulo: "🎥 Nombre del video" } ]
+ * 5. Si un capítulo tiene más de un video, separalos con coma dentro del mismo []:
+ *    videos: [ 
+ *        { id: "dQw4w9WgXcQ", titulo: "🎥 Primera parte" },
+ *        { id: "oHg5SJYRHA0", titulo: "🎥 Segunda parte" }
+ *    ]
+ * 6. Si un capítulo todavía no tiene video, dejalo como: videos: []
  */
 const capitulos = {
     "1": { 
-        videos: [ { id: "1BNtlMtE0JoZQsdYjAqeKCzlZNBR4altA", titulo: "🎥 Clase: Motor de 4 Tiempos" } ], 
+        videos: [ { id: "WMR-nfepfTI", titulo: "Cómo funciona un Motor de 4 Tiempos" } ], 
         t: "Motor de 4 Tiempos", 
         d: `El funcionamiento se divide en cuatro fases principales según el movimiento del pistón dentro del cilindro:
 
@@ -484,7 +506,7 @@ Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta
         imagenes: ["https://upload.wikimedia.org/wikipedia/commons/a/a6/4-Stroke-Engine.gif"] 
     },
     "2": { 
-        videos: [ { id: "1JFYumRoT_ZuCOvaEfIkMIURI_6AQ_dvA", titulo: "🎥 Componentes y Cilindrada" } ], 
+        videos: [ { id: "XUmz26o692Y", titulo: "como medir la Cilindrada" } ], 
         t: "Componentes del Bloque y Cilindrada", 
         d: `Componentes pesados que transforman la explosión en movimiento:
 
@@ -501,7 +523,7 @@ Cuenta: (3.1416 x 2704 / 4) x 50 = 106.186 mm³ = 106 cc (Típico motor 110cc).`
         imagenes: ["cap2.jpg"]
     },
     "3": { 
-        videos: [ { id: "1XrGg7eocj7mah-x90gG_sxoc9kT8aBba", titulo: "🎥 El Sistema OHV (Varillero)" } ], 
+        videos: [ { id: "iy7EsSonTx8", titulo: "El Sistema OHV (Varillero)" } ], 
         t: "Sistema de Distribución (OHV Varillero)", 
         d: `Aca se explica cómo el motor "respira" y se sincroniza.
 
@@ -514,7 +536,7 @@ Dato clave: El engranaje del cigüeñal siempre tiene la mitad de dientes que el
         imagenes: ["cap3.jpg"]
     },
     "4": { 
-        videos: [ { id: "1kxxpkwXeaqScdTkCTn9rPwornQhTtciJ", titulo: "🎥 Motor OHC (Cadenero) y Sincronización" } ], 
+        videos: [ { id: "", titulo: "Regulación de Válvulas" } ], 
         t: "Sincronización y Motor Cadenero (OHC)", 
         d: `Cómo se coordina el movimiento del pistón con las válvulas.
 
@@ -546,7 +568,7 @@ Caja de Cambios: Un conjunto de engranajes ubicados en dos ejes (primario y secu
         imagenes: ["cap6.jpg", "cap.jpg"] 
     },
     "7": { 
-        videos: [ { id: "1xtm4l1edk9gmgwlDAipeUIzlYb_1-hk5", titulo: "ALIMENTACION DE COMBUSTIBLE POR INYECCION" }, { id: "1U_p7NlZfUbniLrnEn10645PIIwwFJs8F", titulo: "alimentacion por carburador" } ], 
+        videos: [ { id: "h_A7FFrPBqY", titulo: "ALIMENTACION DE COMBUSTIBLE POR INYECCION" }, { id: "NdiPN0MRqGk", titulo: "alimentacion por carburador" } ], 
         t: "Sistema de Alimentación", 
         d: `El encargado de preparar la "comida" del motor: la mezcla de aire y nafta.
 
@@ -556,7 +578,7 @@ Inyección Electrónica (EFI): Una computadora (ECU) calcula mediante sensores c
         imagenes: ["cap7.jpg"]
     },
     "8": { 
-        videos: [ { id: "16TgyD-5SJvbySviSUEBHzdpZdLIevdJP", titulo: "🎥 Lubricación y Refrigeración" } ], 
+        videos: [ { id: "YQjM7H4uEH4", titulo: "Refrigeración" } ], 
         t: "Sistemas de Lubricación y Refrigeración", 
         d: `Los sistemas que mantienen vivo al motor:
 
@@ -595,15 +617,15 @@ function init() {
         vidWrapper.innerHTML = ""; 
         
         // Cargar múltiples videos usando el sistema de acordeón (Tarjetas Desplegables)
-        // IMPORTANTE: el iframe NO se crea hasta que el usuario abre la tarjeta.
-        // Así ningún video se descarga ni se reproduce solo al entrar a la página.
+        // IMPORTANTE: el iframe de YouTube NO se crea hasta que el usuario toca "Reproducir".
+        // Así ningún video se carga ni se reproduce solo al entrar a la página.
         if (data.videos && data.videos.length > 0) {
             data.videos.forEach((videoObj, index) => {
-                if (videoObj.id && videoObj.id !== "ID_DRIVE_ACA") {
+                if (videoObj.id && videoObj.id !== "ID_YOUTUBE_ACA") {
                     
                     const details = document.createElement('details');
                     details.className = "video-card";
-                    // Ninguna tarjeta se abre sola: el usuario decide qué video ver.
+                    details.open = false; // Ninguna tarjeta se abre sola: el usuario decide qué video ver.
 
                     const summary = document.createElement('summary');
                     summary.className = "video-summary";
@@ -615,9 +637,8 @@ function init() {
                     const vidCont = document.createElement('div');
                     vidCont.className = "video-container";
 
-                    // Overlay de "Reproducir": el iframe NO se inserta hasta que el usuario
-                    // toca este botón. Esto evita el reproductor roto/a medio cargar que
-                    // aparece en celular cuando el iframe de Drive se monta automáticamente.
+                    // Overlay de "Reproducir": el iframe se inserta recién cuando el usuario
+                    // toca el botón, para no descargar/reproducir video de fondo sin permiso.
                     const playOverlay = document.createElement('div');
                     playOverlay.className = "play-overlay";
                     playOverlay.innerHTML = '<div class="play-btn">▶</div><div class="play-texto">Toca para reproducir</div>';
@@ -632,13 +653,7 @@ function init() {
                         const iframe = document.createElement('iframe');
                         iframe.allowFullscreen = true;
                         iframe.loading = "lazy";
-
-                        if (videoObj.id.length === 11) {
-                            iframe.src = "https://www.youtube.com/embed/" + videoObj.id + "?autoplay=1";
-                        } else {
-                            iframe.src = "https://drive.google.com/file/d/" + videoObj.id + "/preview";
-                        }
-
+                        iframe.src = "https://www.youtube.com/embed/" + videoObj.id + "?autoplay=1";
                         vidCont.appendChild(iframe);
                     }
 

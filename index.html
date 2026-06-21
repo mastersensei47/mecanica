@@ -88,21 +88,68 @@
             margin-right: auto; 
         }
 
-        /* ===== REPRODUCTOR Y TEXTOS ===== */
+        /* ===== TARJETAS DESPLEGABLES DE VIDEOS ===== */
         .reproductor-box {
-            background: #000; 
+            background: #111; 
             border-radius: 10px; 
             overflow: hidden;
             border: 1px solid #333; 
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
             margin-bottom: 25px;
+            padding: 15px;
         }
-        
+
+        .video-card {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .video-summary {
+            padding: 15px;
+            background: #222;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none; /* Oculta la flecha por defecto */
+            border-bottom: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        /* Flecha custom para el acordeón */
+        .video-summary::-webkit-details-marker { display: none; }
+        .video-summary::after {
+            content: '▼';
+            font-size: 12px;
+            color: #ff0000;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card[open] .video-summary {
+            border-bottom: 1px solid #ff0000;
+            background: #333;
+        }
+
+        .video-card[open] .video-summary::after {
+            transform: rotate(180deg);
+        }
+
+        .video-body {
+            padding: 15px;
+            background: #000;
+        }
+
         .video-container { 
             position: relative; 
-            padding-top: 56.25%; 
+            padding-top: 56.25%; /* Relación de aspecto 16:9 */
             background: #000; 
-            margin-bottom: 10px; /* Separación si hay varios videos */
+            width: 100%;
         }
         
         .video-container iframe { 
@@ -114,10 +161,11 @@
             border: none;
         }
 
+        /* ===== TEXTOS E INFORMACIÓN ===== */
         .info-capitulo { 
-            padding: 20px; 
-            background: #111; 
+            padding-top: 15px; 
             border-top: 2px solid #ff0000; 
+            margin-top: 10px;
         }
         
         .info-capitulo h1 { 
@@ -147,7 +195,7 @@
             border-radius: 8px;
             border: 1px solid #444;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            cursor: zoom-in; /* Cursor para indicar que se puede hacer click */
+            cursor: zoom-in; 
             transition: transform 0.2s;
         }
 
@@ -156,48 +204,70 @@
             border-color: #ff0000;
         }
 
-        /* ===== MODAL PARA ZOOM DE IMÁGENES ===== */
+        /* ===== MODAL PARA ZOOM REAL DE IMÁGENES ===== */
         .modal {
             display: none; 
             position: fixed; 
             z-index: 2000; 
-            padding-top: 60px; 
+            padding-top: 50px; 
             left: 0; 
             top: 0; 
             width: 100%; 
             height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.9);
+            overflow: auto; /* Permite scrollear cuando hay zoom */
+            background-color: rgba(0,0,0,0.95);
             backdrop-filter: blur(5px);
+            text-align: center;
         }
 
         .modal-content {
             margin: auto;
             display: block;
-            width: auto;
-            max-width: 95%;
-            max-height: 85vh;
-            border-radius: 8px;
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 4px;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            object-fit: contain;
+            cursor: zoom-in;
+            transition: transform 0.3s ease; /* Transición suave al hacer zoom */
+        }
+
+        /* Clase que se activa con JS al hacer clic en la imagen dentro del modal */
+        .zoomed-in {
+            transform: scale(2.5); /* Aumenta el tamaño 2.5 veces */
+            cursor: zoom-out;
+            max-width: none;
+            max-height: none;
+            margin: 50px auto; /* Da espacio para moverse */
         }
 
         .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 35px;
-            color: #f1f1f1;
+            position: fixed;
+            top: 15px;
+            right: 25px;
+            color: #fff;
             font-size: 40px;
             font-weight: bold;
             transition: 0.3s;
             cursor: pointer;
+            z-index: 2001;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            line-height: 45px;
+            text-align: center;
         }
 
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #ff0000;
-            text-decoration: none;
-            cursor: pointer;
+        .close-btn:hover { color: #ff0000; }
+
+        .hint-zoom {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #aaa;
+            font-size: 14px;
+            pointer-events: none;
         }
 
         /* ===== GRILLA DE CAPÍTULOS ===== */
@@ -246,13 +316,7 @@
             box-shadow: 0 0 10px #ff0000; 
         }
 
-        .btn-extenso {
-            background: #500000;
-            font-size: 16px;
-            padding: 15px 0;
-            border-color: #ff0000;
-        }
-
+        .btn-extenso { background: #500000; font-size: 16px; padding: 15px 0; border-color: #ff0000; }
         .btn-extenso:hover { background: #700000; }
         .btn-extenso.active { background: #ff0000; }
 
@@ -268,7 +332,7 @@
         @media(max-width: 480px) {
             .nav-links span { display: none; }
             .grid-capitulos { grid-template-columns: repeat(3, 1fr); }
-            .close-btn { right: 20px; top: 10px; }
+            .close-btn { right: 15px; top: 15px; width: 40px; height: 40px; line-height: 35px; font-size: 30px; }
         }
     </style>
 </head>
@@ -307,17 +371,17 @@
 <div id="imageModal" class="modal">
   <span class="close-btn" id="closeModal">&times;</span>
   <img class="modal-content" id="imgZoomed">
+  <div class="hint-zoom" id="hintZoom">Toca la imagen para hacer zoom 🔍</div>
 </div>
 
 <script>
 /**
- * BASE DE DATOS
- * Cambié 'id' por 'videos: []'. Podés poner varios links de videos separados por comas.
- * Podés poner varias fotos en 'imagenes: []' separadas por comas.
+ * BASE DE DATOS ACTUALIZADA
+ * Ahora 'videos' es una lista de objetos, donde podés poner el 'id' y el 'titulo' de cada video.
  */
 const capitulos = {
     "1": { 
-        videos: ["1BNtlMtE0JoZQsdYjAqeKCzlZNBR4altA"], 
+        videos: [ { id: "1BNtlMtE0JoZQsdYjAqeKCzlZNBR4altA", titulo: "🎥 Clase: Motor de 4 Tiempos" } ], 
         t: "Motor de 4 Tiempos", 
         d: `El funcionamiento se divide en cuatro fases principales según el movimiento del pistón dentro del cilindro:
 
@@ -331,7 +395,7 @@ Escape: El pistón vuelve a subir hacia el PMS con la válvula de escape abierta
         imagenes: ["https://upload.wikimedia.org/wikipedia/commons/a/a6/4-Stroke-Engine.gif"] 
     },
     "2": { 
-        videos: ["1JFYumRoT_ZuCOvaEfIkMIURI_6AQ_dvA"], 
+        videos: [ { id: "1JFYumRoT_ZuCOvaEfIkMIURI_6AQ_dvA", titulo: "🎥 Componentes y Cilindrada" } ], 
         t: "Componentes del Bloque y Cilindrada", 
         d: `Componentes pesados que transforman la explosión en movimiento:
 
@@ -348,7 +412,7 @@ Cuenta: (3.1416 x 2704 / 4) x 50 = 106.186 mm³ = 106 cc (Típico motor 110cc).`
         imagenes: ["cap2.jpg"]
     },
     "3": { 
-        videos: ["1XrGg7eocj7mah-x90gG_sxoc9kT8aBba"], 
+        videos: [ { id: "1XrGg7eocj7mah-x90gG_sxoc9kT8aBba", titulo: "🎥 El Sistema OHV (Varillero)" } ], 
         t: "Sistema de Distribución (OHV Varillero)", 
         d: `Aca se explica cómo el motor "respira" y se sincroniza.
 
@@ -361,7 +425,7 @@ Dato clave: El engranaje del cigüeñal siempre tiene la mitad de dientes que el
         imagenes: ["cap3.jpg"]
     },
     "4": { 
-        videos: ["1kxxpkwXeaqScdTkCTn9rPwornQhTtciJ"], 
+        videos: [ { id: "1kxxpkwXeaqScdTkCTn9rPwornQhTtciJ", titulo: "🎥 Motor OHC (Cadenero) y Sincronización" } ], 
         t: "Sincronización y Motor Cadenero (OHC)", 
         d: `Cómo se coordina el movimiento del pistón con las válvulas.
 
@@ -373,7 +437,7 @@ Regulación de Válvulas: Se hace con el pistón en el PMS y el árbol de levas 
         imagenes: ["cap4.jpg"]
     },
     "5": { 
-        videos: [], // Vacío porque aún no tenés video. No mostrará error.
+        videos: [], 
         t: "Sistema de Encendido, Ignición y Carga", 
         d: `El "sistema nervioso" de la moto, dividido en dos etapas:
 
@@ -390,10 +454,10 @@ Carga: El estator (bobinado) genera corriente alterna. El Regulador/Rectificador
 El Embrague: Su función es acoplar y desacoplar el movimiento del cigüeñal hacia la caja de cambios. Al apretar la manija, separamos los discos de fricción (fibra) de los discos separadores (acero), cortando la transmisión de fuerza para poder pasar los cambios.
 
 Caja de Cambios: Un conjunto de engranajes ubicados en dos ejes (primario y secundario). Nos permite multiplicar la fuerza del motor (marchas bajas) o ganar velocidad final (marchas altas).`,
-        imagenes: ["cap6.jpg", "cap.jpg"] // Ejemplo de múltiples imágenes
+        imagenes: ["cap6.jpg", "cap.jpg"] 
     },
     "7": { 
-        videos: [], 
+        videos: [{ id: "1xtm4l1edk9gmgwlDAipeUIzlYb_1-hk5", titulo: "ALIMENTACION DE COMBUSTIBLE POR INYECCION" }{ id: "1U_p7NlZfUbniLrnEn10645PIIwwFJs8F", titulo: "alimentacion por carburador" }], 
         t: "Sistema de Alimentación", 
         d: `El encargado de preparar la "comida" del motor: la mezcla de aire y nafta.
 
@@ -403,7 +467,7 @@ Inyección Electrónica (EFI): Una computadora (ECU) calcula mediante sensores c
         imagenes: ["cap7.jpg"]
     },
     "8": { 
-        videos: ["16TgyD-5SJvbySviSUEBHzdpZdLIevdJP"], 
+        videos: [ { id: "16TgyD-5SJvbySviSUEBHzdpZdLIevdJP", titulo: "🎥 Lubricación y Refrigeración" } ], 
         t: "Sistemas de Lubricación y Refrigeración", 
         d: `Los sistemas que mantienen vivo al motor:
 
@@ -415,8 +479,8 @@ Refrigeración:
         imagenes: ["cap8.jpg"]
     },
     "9": { 
-        videos: ["1LpMMC9Ug53cfuSa-0q5kG4_rvug1ePLk"], 
-        t: "Clase Magistral de Desarme (29 min)", 
+        videos: [ { id: "1LpMMC9Ug53cfuSa-0q5kG4_rvug1ePLk", titulo: "⭐ Clase Magistral Completa (29 min)" } ], 
+        t: "Clase Magistral de Desarme", 
         d: `En este material audiovisual analizamos a fondo el ciclo de combustión y desarmamos piezas en tiempo real.
 
 00:00 Ciclo de combustión de los 4 tiempos
@@ -439,26 +503,42 @@ function init() {
 
     if (data) {
         const vidWrapper = document.getElementById('vid-wrapper');
-        vidWrapper.innerHTML = ""; // Limpiar videos anteriores
+        vidWrapper.innerHTML = ""; 
         
-        // Cargar múltiples videos si los hay
+        // Cargar múltiples videos usando el sistema de acordeón (Tarjetas Desplegables)
         if (data.videos && data.videos.length > 0) {
-            data.videos.forEach(vidId => {
-                if (vidId && vidId !== "ID_DRIVE_ACA") {
+            data.videos.forEach((videoObj, index) => {
+                if (videoObj.id && videoObj.id !== "ID_DRIVE_ACA") {
+                    
+                    const details = document.createElement('details');
+                    details.className = "video-card";
+                    // Abrimos automáticamente solo la primera tarjeta
+                    if(index === 0) details.open = true;
+                    
+                    const summary = document.createElement('summary');
+                    summary.className = "video-summary";
+                    summary.innerText = videoObj.titulo || "Video " + (index + 1);
+                    
+                    const body = document.createElement('div');
+                    body.className = "video-body";
+
                     const vidCont = document.createElement('div');
                     vidCont.className = "video-container";
                     
                     const iframe = document.createElement('iframe');
                     iframe.allowFullscreen = true;
                     
-                    if(vidId.length === 11) {
-                        iframe.src = "https://www.youtube.com/embed/" + vidId + "?autoplay=0";
+                    if(videoObj.id.length === 11) {
+                        iframe.src = "https://www.youtube.com/embed/" + videoObj.id + "?autoplay=0";
                     } else {
-                        iframe.src = "https://drive.google.com/file/d/" + vidId + "/preview";
+                        iframe.src = "https://drive.google.com/file/d/" + videoObj.id + "/preview";
                     }
                     
                     vidCont.appendChild(iframe);
-                    vidWrapper.appendChild(vidCont);
+                    body.appendChild(vidCont);
+                    details.appendChild(summary);
+                    details.appendChild(body);
+                    vidWrapper.appendChild(details);
                 }
             });
         }
@@ -470,7 +550,7 @@ function init() {
         const galeria = document.getElementById('img-gallery');
         galeria.innerHTML = ""; 
         
-        // Cargar múltiples imágenes y asignar evento de Zoom
+        // Cargar imágenes
         if(data.imagenes && data.imagenes.length > 0) {
             data.imagenes.forEach(imgSrc => {
                 const img = document.createElement('img');
@@ -478,12 +558,16 @@ function init() {
                 img.className = 'cap-img';
                 img.alt = 'Esquema MS47 - ' + data.t;
                 
-                // Función para el ZOOM al hacer click
+                // Abrir el Modal al hacer click
                 img.onclick = function() {
                     const modal = document.getElementById("imageModal");
                     const modalImg = document.getElementById("imgZoomed");
                     modal.style.display = "block";
                     modalImg.src = this.src;
+                    
+                    // Resetear el zoom cada vez que se abre una imagen nueva
+                    modalImg.classList.remove('zoomed-in');
+                    document.getElementById("hintZoom").style.display = "block";
                 }
 
                 img.onerror = function() {
@@ -523,12 +607,25 @@ function renderBotones(actual) {
     }
 }
 
-// Lógica para cerrar el Modal de Zoom
+// Lógica del Zoom REAL dentro del Modal
+const modalImg = document.getElementById("imgZoomed");
+modalImg.onclick = function(e) {
+    e.stopPropagation(); // Evita que el clic cierre el modal
+    this.classList.toggle("zoomed-in");
+    
+    if(this.classList.contains("zoomed-in")) {
+        document.getElementById("hintZoom").style.display = "none";
+    } else {
+        document.getElementById("hintZoom").style.display = "block";
+    }
+};
+
+// Cerrar el Modal
 document.getElementById("closeModal").onclick = function() {
     document.getElementById("imageModal").style.display = "none";
 }
 
-// Cerrar el modal tocando afuera de la imagen
+// Cerrar el modal tocando el fondo negro (fuera de la imagen)
 window.onclick = function(event) {
     const modal = document.getElementById("imageModal");
     if (event.target === modal) {

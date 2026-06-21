@@ -161,6 +161,11 @@
             border: none;
         }
 
+        /* Mientras la tarjeta está cerrada, no mostramos el cuerpo (ahorra espacio en mobile) */
+        .video-card:not([open]) .video-body {
+            display: none;
+        }
+
         /* ===== TEXTOS E INFORMACIÓN ===== */
         .info-capitulo { 
             padding-top: 15px; 
@@ -229,11 +234,12 @@
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
             cursor: zoom-in;
             transition: transform 0.3s ease; /* Transición suave al hacer zoom */
+            touch-action: pinch-zoom; /* Permite el zoom nativo con dos dedos en celular */
         }
 
         /* Clase que se activa con JS al hacer clic en la imagen dentro del modal */
         .zoomed-in {
-            transform: scale(2.5); /* Aumenta el tamaño 2.5 veces */
+            transform: scale(1.6); /* Aumento moderado, controlado por el usuario */
             cursor: zoom-out;
             max-width: none;
             max-height: none;
@@ -506,15 +512,16 @@ function init() {
         vidWrapper.innerHTML = ""; 
         
         // Cargar múltiples videos usando el sistema de acordeón (Tarjetas Desplegables)
+        // IMPORTANTE: el iframe NO se crea hasta que el usuario abre la tarjeta.
+        // Así ningún video se descarga ni se reproduce solo al entrar a la página.
         if (data.videos && data.videos.length > 0) {
             data.videos.forEach((videoObj, index) => {
                 if (videoObj.id && videoObj.id !== "ID_DRIVE_ACA") {
                     
                     const details = document.createElement('details');
                     details.className = "video-card";
-                    // Abrimos automáticamente solo la primera tarjeta
-                    if(index === 0) details.open = true;
-                    
+                    // Ninguna tarjeta se abre sola: el usuario decide qué video ver.
+
                     const summary = document.createElement('summary');
                     summary.className = "video-summary";
                     summary.innerText = videoObj.titulo || "Video " + (index + 1);
@@ -524,17 +531,26 @@ function init() {
 
                     const vidCont = document.createElement('div');
                     vidCont.className = "video-container";
-                    
-                    const iframe = document.createElement('iframe');
-                    iframe.allowFullscreen = true;
-                    
-                    if(videoObj.id.length === 11) {
-                        iframe.src = "https://www.youtube.com/embed/" + videoObj.id + "?autoplay=0";
-                    } else {
-                        iframe.src = "https://drive.google.com/file/d/" + videoObj.id + "/preview";
-                    }
-                    
-                    vidCont.appendChild(iframe);
+
+                    // El iframe se crea recién al abrir el <details> (carga perezosa / lazy load).
+                    let cargado = false;
+                    details.addEventListener('toggle', function() {
+                        if (details.open && !cargado) {
+                            cargado = true;
+                            const iframe = document.createElement('iframe');
+                            iframe.allowFullscreen = true;
+                            iframe.loading = "lazy";
+
+                            if (videoObj.id.length === 11) {
+                                iframe.src = "https://www.youtube.com/embed/" + videoObj.id + "?autoplay=0";
+                            } else {
+                                iframe.src = "https://drive.google.com/file/d/" + videoObj.id + "/preview";
+                            }
+
+                            vidCont.appendChild(iframe);
+                        }
+                    });
+
                     body.appendChild(vidCont);
                     details.appendChild(summary);
                     details.appendChild(body);

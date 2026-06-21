@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS47 - O11CE Nueva Generación</title>
+    <title>MS47 - mecanica de motos</title>
 
     <style>
         /* ===== ESTILOS BASE ===== */
@@ -161,6 +161,45 @@
             border: none;
         }
 
+        /* Overlay "Toca para reproducir": evita que el iframe (sobre todo el de Drive)
+           se monte solo y muestre su interfaz rota/incompleta en celular. */
+        .play-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(180deg, #1a1a1a, #000);
+            cursor: pointer;
+        }
+
+        .play-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255,0,0,0.85);
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255,0,0,0.5);
+        }
+
+        .play-overlay:hover .play-btn,
+        .play-overlay:active .play-btn {
+            background: #ff0000;
+            transform: scale(1.05);
+        }
+
+        .play-texto {
+            color: #ccc;
+            font-size: 13px;
+        }
+
         /* Mientras la tarjeta está cerrada, no mostramos el cuerpo (ahorra espacio en mobile) */
         .video-card:not([open]) .video-body {
             display: none;
@@ -214,36 +253,81 @@
             display: none; 
             position: fixed; 
             z-index: 2000; 
-            padding-top: 50px; 
             left: 0; 
             top: 0; 
             width: 100%; 
             height: 100%; 
-            overflow: auto; /* Permite scrollear cuando hay zoom */
+            overflow: hidden; /* El paneo lo maneja el wrapper interno, no la página */
             background-color: rgba(0,0,0,0.95);
             backdrop-filter: blur(5px);
-            text-align: center;
+            touch-action: none; /* Evita que el navegador interprete los gestos, los manejamos nosotros */
         }
 
+        /* Wrapper que permite arrastrar (pan) la imagen cuando está ampliada */
+        .modal-viewport {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .modal-viewport.dragging { cursor: grabbing; }
+
         .modal-content {
-            margin: auto;
             display: block;
             max-width: 90%;
             max-height: 80vh;
             border-radius: 4px;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            cursor: zoom-in;
-            transition: transform 0.3s ease; /* Transición suave al hacer zoom */
-            touch-action: pinch-zoom; /* Permite el zoom nativo con dos dedos en celular */
+            transition: transform 0.15s ease-out;
+            user-select: none;
+            -webkit-user-drag: none;
+            touch-action: none;
         }
 
-        /* Clase que se activa con JS al hacer clic en la imagen dentro del modal */
-        .zoomed-in {
-            transform: scale(1.6); /* Aumento moderado, controlado por el usuario */
-            cursor: zoom-out;
-            max-width: none;
-            max-height: none;
-            margin: 50px auto; /* Da espacio para moverse */
+        /* Barra de controles de zoom, siempre visible y fija abajo */
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(20,20,20,0.85);
+            border: 1px solid #444;
+            border-radius: 30px;
+            padding: 8px 14px;
+            z-index: 2002;
+        }
+
+        .zoom-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid #555;
+            background: #222;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .zoom-btn:hover { background: #ff0000; border-color: #fff; }
+        .zoom-btn:active { transform: scale(0.92); }
+
+        .zoom-level {
+            color: #ccc;
+            font-size: 13px;
+            min-width: 42px;
+            text-align: center;
         }
 
         .close-btn {
@@ -265,16 +349,6 @@
         }
 
         .close-btn:hover { color: #ff0000; }
-
-        .hint-zoom {
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            color: #aaa;
-            font-size: 14px;
-            pointer-events: none;
-        }
 
         /* ===== GRILLA DE CAPÍTULOS ===== */
         .seccion-titulo {
@@ -339,6 +413,8 @@
             .nav-links span { display: none; }
             .grid-capitulos { grid-template-columns: repeat(3, 1fr); }
             .close-btn { right: 15px; top: 15px; width: 40px; height: 40px; line-height: 35px; font-size: 30px; }
+            .zoom-controls { bottom: 12px; padding: 6px 10px; gap: 6px; }
+            .zoom-btn { width: 34px; height: 34px; font-size: 18px; }
         }
     </style>
 </head>
@@ -376,8 +452,15 @@
 
 <div id="imageModal" class="modal">
   <span class="close-btn" id="closeModal">&times;</span>
-  <img class="modal-content" id="imgZoomed">
-  <div class="hint-zoom" id="hintZoom">Toca la imagen para hacer zoom 🔍</div>
+  <div class="modal-viewport" id="modalViewport">
+      <img class="modal-content" id="imgZoomed" draggable="false">
+  </div>
+  <div class="zoom-controls">
+      <div class="zoom-btn" id="zoomOut">−</div>
+      <div class="zoom-level" id="zoomLevel">100%</div>
+      <div class="zoom-btn" id="zoomIn">+</div>
+      <div class="zoom-btn" id="zoomReset" title="Restablecer">⟲</div>
+  </div>
 </div>
 
 <script>
@@ -532,23 +615,37 @@ function init() {
                     const vidCont = document.createElement('div');
                     vidCont.className = "video-container";
 
-                    // El iframe se crea recién al abrir el <details> (carga perezosa / lazy load).
+                    // Overlay de "Reproducir": el iframe NO se inserta hasta que el usuario
+                    // toca este botón. Esto evita el reproductor roto/a medio cargar que
+                    // aparece en celular cuando el iframe de Drive se monta automáticamente.
+                    const playOverlay = document.createElement('div');
+                    playOverlay.className = "play-overlay";
+                    playOverlay.innerHTML = '<div class="play-btn">▶</div><div class="play-texto">Toca para reproducir</div>';
+                    vidCont.appendChild(playOverlay);
+
                     let cargado = false;
-                    details.addEventListener('toggle', function() {
-                        if (details.open && !cargado) {
-                            cargado = true;
-                            const iframe = document.createElement('iframe');
-                            iframe.allowFullscreen = true;
-                            iframe.loading = "lazy";
+                    function cargarVideo() {
+                        if (cargado) return;
+                        cargado = true;
+                        playOverlay.remove();
 
-                            if (videoObj.id.length === 11) {
-                                iframe.src = "https://www.youtube.com/embed/" + videoObj.id + "?autoplay=0";
-                            } else {
-                                iframe.src = "https://drive.google.com/file/d/" + videoObj.id + "/preview";
-                            }
+                        const iframe = document.createElement('iframe');
+                        iframe.allowFullscreen = true;
+                        iframe.loading = "lazy";
 
-                            vidCont.appendChild(iframe);
+                        if (videoObj.id.length === 11) {
+                            iframe.src = "https://www.youtube.com/embed/" + videoObj.id + "?autoplay=1";
+                        } else {
+                            iframe.src = "https://drive.google.com/file/d/" + videoObj.id + "/preview";
                         }
+
+                        vidCont.appendChild(iframe);
+                    }
+
+                    playOverlay.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        cargarVideo();
                     });
 
                     body.appendChild(vidCont);
@@ -576,14 +673,7 @@ function init() {
                 
                 // Abrir el Modal al hacer click
                 img.onclick = function() {
-                    const modal = document.getElementById("imageModal");
-                    const modalImg = document.getElementById("imgZoomed");
-                    modal.style.display = "block";
-                    modalImg.src = this.src;
-                    
-                    // Resetear el zoom cada vez que se abre una imagen nueva
-                    modalImg.classList.remove('zoomed-in');
-                    document.getElementById("hintZoom").style.display = "block";
+                    abrirModalZoom(this.src);
                 }
 
                 img.onerror = function() {
@@ -623,31 +713,158 @@ function renderBotones(actual) {
     }
 }
 
-// Lógica del Zoom REAL dentro del Modal
+// ===== LÓGICA DE ZOOM CONTROLADO POR EL USUARIO =====
+// Reemplaza el viejo sistema de "toggle a una escala fija" por zoom progresivo
+// con botones +/-, pellizco con dos dedos, arrastre y doble-tap.
+
+const modal = document.getElementById("imageModal");
+const modalViewport = document.getElementById("modalViewport");
 const modalImg = document.getElementById("imgZoomed");
-modalImg.onclick = function(e) {
-    e.stopPropagation(); // Evita que el clic cierre el modal
-    this.classList.toggle("zoomed-in");
-    
-    if(this.classList.contains("zoomed-in")) {
-        document.getElementById("hintZoom").style.display = "none";
-    } else {
-        document.getElementById("hintZoom").style.display = "block";
-    }
+const zoomLevelLabel = document.getElementById("zoomLevel");
+
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 4;
+const ZOOM_STEP = 0.5;
+
+let escala = 1;
+let posX = 0; // desplazamiento (pan) actual en px
+let posY = 0;
+
+function aplicarTransform() {
+    modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${escala})`;
+    modalImg.style.cursor = escala > 1 ? "grab" : "zoom-in";
+    zoomLevelLabel.innerText = Math.round(escala * 100) + "%";
+}
+
+function limitarPan() {
+    // Evita que la imagen se arrastre infinitamente fuera de pantalla
+    const maxOffsetX = (modalViewport.clientWidth * (escala - 1)) / 2 + 100;
+    const maxOffsetY = (modalViewport.clientHeight * (escala - 1)) / 2 + 100;
+    posX = Math.max(-maxOffsetX, Math.min(maxOffsetX, posX));
+    posY = Math.max(-maxOffsetY, Math.min(maxOffsetY, posY));
+}
+
+function setEscala(nuevaEscala) {
+    escala = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, nuevaEscala));
+    if (escala === ZOOM_MIN) { posX = 0; posY = 0; }
+    limitarPan();
+    aplicarTransform();
+}
+
+function abrirModalZoom(src) {
+    modal.style.display = "block";
+    modalImg.src = src;
+    escala = 1; posX = 0; posY = 0;
+    aplicarTransform();
+}
+
+function cerrarModal() {
+    modal.style.display = "none";
+}
+
+// --- Botones de control ---
+document.getElementById("zoomIn").onclick = function(e) {
+    e.stopPropagation();
+    setEscala(escala + ZOOM_STEP);
+};
+document.getElementById("zoomOut").onclick = function(e) {
+    e.stopPropagation();
+    setEscala(escala - ZOOM_STEP);
+};
+document.getElementById("zoomReset").onclick = function(e) {
+    e.stopPropagation();
+    setEscala(1);
 };
 
-// Cerrar el Modal
-document.getElementById("closeModal").onclick = function() {
-    document.getElementById("imageModal").style.display = "none";
+// --- Doble click / doble tap: alterna entre 1x y 2x ---
+let ultimoTap = 0;
+modalImg.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const ahora = Date.now();
+    if (ahora - ultimoTap < 300) {
+        setEscala(escala > 1 ? 1 : 2);
+    }
+    ultimoTap = ahora;
+});
+
+// --- Arrastre (pan) con mouse, solo si hay zoom aplicado ---
+let arrastrando = false;
+let inicioX = 0, inicioY = 0;
+
+modalViewport.addEventListener('mousedown', function(e) {
+    if (escala <= 1) return;
+    arrastrando = true;
+    modalViewport.classList.add('dragging');
+    inicioX = e.clientX - posX;
+    inicioY = e.clientY - posY;
+});
+window.addEventListener('mousemove', function(e) {
+    if (!arrastrando) return;
+    posX = e.clientX - inicioX;
+    posY = e.clientY - inicioY;
+    limitarPan();
+    aplicarTransform();
+});
+window.addEventListener('mouseup', function() {
+    arrastrando = false;
+    modalViewport.classList.remove('dragging');
+});
+
+// --- Rueda del mouse: zoom in/out (desktop) ---
+modalViewport.addEventListener('wheel', function(e) {
+    if (modal.style.display !== "block") return;
+    e.preventDefault();
+    setEscala(escala + (e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP));
+}, { passive: false });
+
+// --- Gestos táctiles (celular): pellizco para zoom, un dedo para arrastrar ---
+let pinchInicial = null;
+let escalaInicialPinch = 1;
+let touchInicioX = 0, touchInicioY = 0;
+let panInicioX = 0, panInicioY = 0;
+
+function distanciaToques(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
 }
 
-// Cerrar el modal tocando el fondo negro (fuera de la imagen)
-window.onclick = function(event) {
-    const modal = document.getElementById("imageModal");
-    if (event.target === modal) {
-        modal.style.display = "none";
+modalViewport.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) {
+        pinchInicial = distanciaToques(e.touches);
+        escalaInicialPinch = escala;
+    } else if (e.touches.length === 1 && escala > 1) {
+        touchInicioX = e.touches[0].clientX - posX;
+        touchInicioY = e.touches[0].clientY - posY;
     }
-}
+}, { passive: true });
+
+modalViewport.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 2 && pinchInicial !== null) {
+        e.preventDefault();
+        const distanciaActual = distanciaToques(e.touches);
+        const factor = distanciaActual / pinchInicial;
+        setEscala(escalaInicialPinch * factor);
+    } else if (e.touches.length === 1 && escala > 1) {
+        e.preventDefault();
+        posX = e.touches[0].clientX - touchInicioX;
+        posY = e.touches[0].clientY - touchInicioY;
+        limitarPan();
+        aplicarTransform();
+    }
+}, { passive: false });
+
+modalViewport.addEventListener('touchend', function(e) {
+    if (e.touches.length < 2) pinchInicial = null;
+});
+
+// --- Cerrar el Modal ---
+document.getElementById("closeModal").onclick = cerrarModal;
+
+// Cerrar el modal tocando el fondo negro (fuera de la imagen), pero no si se está arrastrando
+modalViewport.addEventListener('click', function(e) {
+    if (e.target === modalViewport) cerrarModal();
+});
 
 window.onload = init;
 </script>
